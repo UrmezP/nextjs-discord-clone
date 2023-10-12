@@ -11,11 +11,16 @@ import {
   useState,
 } from "react";
 import Globalchatmessage from "./globalchatmessage";
+import { useRouter } from "next/navigation";
 
 export default function Globalchatwindow() {
   const [allMessages, setAllMessages] = useState(Array<UserChatMessage>);
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
+
+  const usernameRef = useRef(null as any as HTMLInputElement);
+
+  const { push } = useRouter();
 
   const messagesEndRef = useRef(null) as any as MutableRefObject<HTMLElement>;
 
@@ -40,6 +45,20 @@ export default function Globalchatwindow() {
   useEffect(() => {
     scrollToBottom();
   }, [allMessages]);
+
+  useEffect(() => {
+    const user: ChatUser = JSON.parse(
+      sessionStorage.getItem("discord-chat-user") as string
+    );
+    if (user) {
+      setUsername(user.userId);
+      if (usernameRef.current) {
+        usernameRef.current.disabled = true;
+      }
+    } else {
+      push("/");
+    }
+  }, []);
 
   function handleMessageInput(e: ChangeEvent<HTMLInputElement>) {
     setMessage(e.target.value);
@@ -134,6 +153,7 @@ export default function Globalchatwindow() {
           <div className="grow flex">
             <span className="inline-block w-32">Username :</span>{" "}
             <input
+              ref={usernameRef}
               id="usernameInput"
               type="text"
               className="grow px-4"
