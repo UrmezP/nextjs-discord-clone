@@ -5,6 +5,7 @@ import {
   ChangeEvent,
   FormEvent,
   MutableRefObject,
+  useCallback,
   useEffect,
   useMemo,
   useRef,
@@ -20,38 +21,48 @@ export default function Globalchatwindow() {
 
   const usernameRef = useRef(null as any as HTMLInputElement);
 
+  // use this to push pages onto the router
   const { push } = useRouter();
 
+  // scroll to bottom when new message received
   const messagesEndRef = useRef(null) as any as MutableRefObject<HTMLElement>;
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  function getMessageUser(index: number): UserChatMessage | undefined {
-    return allMessages[index];
-  }
+  // get the user who sent message using Index
+  const getMessageUser = useCallback(
+    (index: number): UserChatMessage | undefined => {
+      return allMessages[index];
+    },
+    []
+  );
 
+  // open socket connection for the globalchatwindow
   const socket = useMemo(() => {
-    return io("http://localhost:3001/");
+    return io(`${process.env.NEXT_PUBLIC_EXPRESS_SERVER_API}`);
   }, []);
 
+  // whenever socket has changed, run the useEffect
   useEffect(() => {
     socket.on("globalchatappend", (obj: UserChatMessage) => {
       setAllMessages((prev) => [...prev, obj]);
     });
   }, [socket]);
 
+  // scroll to bottom whenever allMessages state gets updated
   useEffect(() => {
     scrollToBottom();
   }, [allMessages]);
 
+  // when component loads, get the ChatUser from session.
+  // if user exists, load him. Else return back to homepage to signin
   useEffect(() => {
     const user: ChatUser = JSON.parse(
       sessionStorage.getItem("discord-chat-user") as string
     );
     if (user) {
-      setUsername(user.userId);
+      setUsername(user.username);
       if (usernameRef.current) {
         usernameRef.current.disabled = true;
       }
@@ -71,7 +82,7 @@ export default function Globalchatwindow() {
     e.preventDefault();
     // return if username and message doesn't exist
     if (!Boolean(username) || !Boolean(message)) {
-      return alert("Please enter username and message");
+      return alert("Please enter message before pressing send");
     }
     // Create a ChatMessage object if socket exists
     if (socket) {
@@ -83,7 +94,7 @@ export default function Globalchatwindow() {
       throw new Error("socket is not connected");
     }
     var userMessage: UserChatMessage = {
-      userId: username,
+      username: username,
       message: globalchatmessage,
     };
     // clear text field
@@ -94,13 +105,8 @@ export default function Globalchatwindow() {
 
   const MessagesContent = useMemo(() => {
     return allMessages.map((userMessage, index) => {
-      console.log(
-        getMessageUser(index - 1)?.userId,
-        getMessageUser(index - 1)?.userId == userMessage.userId,
-        username == getMessageUser(index - 1)?.userId
-      );
-      return getMessageUser(index - 1)?.userId == userMessage.userId ? (
-        username == userMessage.userId ? (
+      return getMessageUser(index - 1)?.username == userMessage.username ? (
+        username == userMessage.username ? (
           <Globalchatmessage
             key={`message${index}`}
             userMessage={userMessage}
@@ -115,7 +121,7 @@ export default function Globalchatwindow() {
             isSender={false}
           />
         )
-      ) : username == userMessage.userId ? (
+      ) : username == userMessage.username ? (
         <Globalchatmessage
           key={`message${index}`}
           userMessage={userMessage}

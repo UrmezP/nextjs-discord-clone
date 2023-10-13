@@ -45,12 +45,12 @@ export default function Globalchatusernamechecker() {
           }
         );
         if (!userSignedIn.ok) {
-          throw new Error("Username already taken (from server)");
+          const userData: { message: string } = await userSignedIn.json();
+          throw new Error(userData.message);
         }
-        const userData: { message: string } = await userSignedIn.json();
         sessionStorage.setItem(
           "discord-chat-user",
-          JSON.stringify({ userId: username })
+          JSON.stringify({ username: username })
         );
         setIsSubmitting(false);
         push("/globalChat");
@@ -59,7 +59,7 @@ export default function Globalchatusernamechecker() {
         alert(error);
       }
     } else {
-      alert("Please enter a username firstaaa");
+      alert("Please enter a unique username first");
     }
   };
   return (

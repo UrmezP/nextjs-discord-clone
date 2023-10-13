@@ -3,9 +3,9 @@ type ChatMessage = {
     socketId: string;
 };
 type ChatUser= {
-  userId : string,
+  username : string,
 }
 type UserChatMessage = {
-  userId: string,
+  username: string,
   message: ChatMessage
 }
