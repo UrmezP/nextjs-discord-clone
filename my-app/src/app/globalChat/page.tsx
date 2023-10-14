@@ -6,7 +6,7 @@ import GlobalChatSidebar from "../chatComponents/globalchatsidebar";
 import socket from "../util/socket";
 import { useEffect, useState } from "react";
 
-export default function globalChat() {
+export default function GlobalChat() {
   const [AllUserList, setAllUserList] = useState([] as ChatUser[]);
 
   useEffect(() => {
