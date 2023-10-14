@@ -1,6 +1,5 @@
 "use client";
 
-import { io } from "socket.io-client";
 import {
   ChangeEvent,
   FormEvent,
@@ -13,6 +12,8 @@ import {
 } from "react";
 import Globalchatmessage from "./globalchatmessage";
 import { useRouter } from "next/navigation";
+
+import socket from "../util/socket";
 
 export default function Globalchatwindow() {
   const [allMessages, setAllMessages] = useState(Array<UserChatMessage>);
@@ -38,26 +39,13 @@ export default function Globalchatwindow() {
     []
   );
 
-  // open socket connection for the globalchatwindow
-  const socket = useMemo(() => {
-    return io(`${process.env.NEXT_PUBLIC_EXPRESS_SERVER_API}`);
-  }, []);
-
-  // whenever socket has changed, run the useEffect
+  // when component loads, get the ChatUser from session.
+  // if user exists, load him. Else return back to homepage to signin
   useEffect(() => {
     socket.on("globalchatappend", (obj: UserChatMessage) => {
       setAllMessages((prev) => [...prev, obj]);
     });
-  }, [socket]);
 
-  // scroll to bottom whenever allMessages state gets updated
-  useEffect(() => {
-    scrollToBottom();
-  }, [allMessages]);
-
-  // when component loads, get the ChatUser from session.
-  // if user exists, load him. Else return back to homepage to signin
-  useEffect(() => {
     const user: ChatUser = JSON.parse(
       sessionStorage.getItem("discord-chat-user") as string
     );
@@ -70,6 +58,11 @@ export default function Globalchatwindow() {
       push("/");
     }
   }, []);
+
+  // scroll to bottom whenever allMessages state gets updated
+  useEffect(() => {
+    scrollToBottom();
+  }, [allMessages]);
 
   function handleMessageInput(e: ChangeEvent<HTMLInputElement>) {
     setMessage(e.target.value);

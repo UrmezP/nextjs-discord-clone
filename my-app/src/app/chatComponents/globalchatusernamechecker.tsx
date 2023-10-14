@@ -35,7 +35,7 @@ export default function Globalchatusernamechecker() {
       setIsSubmitting(true);
       try {
         const userSignedIn = await fetch(
-          `${process.env.NEXT_PUBLIC_EXPRESS_SERVER_API}/checkUserExists`,
+          `${process.env.NEXT_PUBLIC_EXPRESS_SERVER_API_DEV}/checkUserExists`,
           {
             method: "POST",
             headers: {
