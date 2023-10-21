@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation";
 import socket from "../util/socket";
 
 export default function Globalchatwindow() {
-  const [allMessages, setAllMessages] = useState(Array<UserChatMessage>);
+  const [allMessages, setAllMessages] = useState([] as UserChatMessage[]);
   const [message, setMessage] = useState("");
   const [username, setUsername] = useState("");
 
@@ -33,10 +33,10 @@ export default function Globalchatwindow() {
 
   // get the user who sent message using Index
   const getMessageUser = useCallback(
-    (index: number): UserChatMessage | undefined => {
+    (index: number): UserChatMessage => {
       return allMessages[index];
     },
-    []
+    [allMessages]
   );
 
   // when component loads, get the ChatUser from session.
@@ -98,6 +98,11 @@ export default function Globalchatwindow() {
 
   const MessagesContent = useMemo(() => {
     return allMessages.map((userMessage, index) => {
+      console.log(
+        getMessageUser(index - 1)?.username,
+        userMessage.username,
+        index
+      );
       return getMessageUser(index - 1)?.username == userMessage.username ? (
         username == userMessage.username ? (
           <Globalchatmessage
@@ -134,9 +139,9 @@ export default function Globalchatwindow() {
 
   const ContentWrapper = useMemo(() => {
     return (
-      <section className="m-auto sm:max-w-md md:max-w-2xl max-w-4xl pb-4 min-h-52 flex flex-col justify-center items-center bg-slate-200 gap-4">
+      <section className="sm:max-w-md grow min-h-[400px] sm:w-sm md:w-[600px] md:max-w-5xl border-r border-black max-w-4xl pb-4 min-h-52 flex flex-col justify-center items-center bg-slate-200 gap-4">
         <div className="grow py-4 flex flex-col justify-start text-slate-500 border-b border-black w-full text-center">
-          <span>GlobalChat</span>
+          <span>{username}</span>
           <div
             id="globalChatWindow"
             className="max-h-48 md:max-h-72 overflow-auto overflow-x-hidden"
@@ -155,7 +160,7 @@ export default function Globalchatwindow() {
               ref={usernameRef}
               id="usernameInput"
               type="text"
-              className="grow px-4"
+              className="grow px-4 rounded-md"
               onChange={(e) => {
                 handleUsernameInput(e);
               }}
@@ -167,7 +172,7 @@ export default function Globalchatwindow() {
             <input
               id="messageInput"
               type="text"
-              className="grow px-4"
+              className="grow px-4 rounded-md"
               onChange={(e) => {
                 handleMessageInput(e);
               }}
@@ -177,7 +182,7 @@ export default function Globalchatwindow() {
           <input
             type="submit"
             value="Send"
-            className="py-2 px-4 bg-slate-800 text-white"
+            className="py-2 px-4 bg-slate-800 text-white rounded-md"
           />
         </form>
       </section>

@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <main className="md:px-4 md:py-4">
-          <h1 className="text-4xl">GlobalChat</h1>
+          <h1 className="text-4xl text-center">GlobalChat</h1>
           <br />
           {children}
         </main>

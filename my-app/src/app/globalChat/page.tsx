@@ -18,20 +18,17 @@ export default function GlobalChat() {
 
   return (
     <div className="flex w-full">
-      <section className="grow">
-        <p className="mb-8">
-          Chat with anyone globally! Just enter your message and send!
-        </p>
+      <section className="grow flex justify-center items-stretch ">
         <Globalchatwindow />
+        {AllUserList ? (
+          <GlobalChatSidebar UserList={AllUserList} />
+        ) : (
+          <GlobalChatSidebar />
+        )}
       </section>
       <div className="absolute top-0 right-0">
         <LogoutButton />
       </div>
-      {AllUserList ? (
-        <GlobalChatSidebar UserList={AllUserList} />
-      ) : (
-        <GlobalChatSidebar />
-      )}
     </div>
   );
 }
