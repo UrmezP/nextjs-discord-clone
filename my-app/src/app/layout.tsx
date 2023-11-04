@@ -1,8 +1,8 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Roboto } from "next/font/google";
 
-const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   title: "Chat App made by Urmez",
@@ -16,12 +16,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <main className="md:px-4 md:py-4">
-          <h1 className="text-4xl text-center">GlobalChat</h1>
-          <br />
-          {children}
-        </main>
+      <body className={roboto.className}>
+        <main>{children}</main>
       </body>
     </html>
   );

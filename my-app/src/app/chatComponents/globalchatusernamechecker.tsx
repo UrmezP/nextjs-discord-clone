@@ -4,9 +4,14 @@ import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
 
 export function ButtonReady() {
-  return <Button>Check availability</Button>;
+  return (
+    <Button className="bg-[#6633FF] hover:bg-[#35276f]">
+      Check availability
+    </Button>
+  );
 }
 export function ButtonLoading() {
   return (
@@ -22,7 +27,7 @@ export default function Globalchatusernamechecker() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { push } = useRouter();
 
-  const uniqueUsername = useMemo(() => {}, [username]);
+  // const uniqueUsername = useMemo(() => {}, [username]);
 
   const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
     return setUsername(e.target.value);
@@ -33,6 +38,7 @@ export default function Globalchatusernamechecker() {
 
     if (username) {
       setIsSubmitting(true);
+
       try {
         const userSignedIn = await fetch(
           `${process.env.NEXT_PUBLIC_EXPRESS_SERVER_API_PROD}/checkUserExists`,
@@ -52,8 +58,10 @@ export default function Globalchatusernamechecker() {
           "discord-chat-user",
           JSON.stringify({ username: username })
         );
-        setIsSubmitting(false);
-        push("/globalChat");
+        setTimeout(() => {
+          setIsSubmitting(false);
+          push("/globalChat");
+        }, 1000);
       } catch (error) {
         setIsSubmitting(false);
         alert(error);
@@ -64,14 +72,15 @@ export default function Globalchatusernamechecker() {
   };
   return (
     <form
-      className="flex flex-col gap-4 justify-center items-center"
+      className="flex flex-col gap-2 justify-start pt-2 items-start"
       onSubmit={(e) => handleSubmit(e)}
     >
-      <input
-        className="border border-black"
+      <Input
         type="text"
         name="username"
         id="username"
+        placeholder="Username"
+        className="md:w-[420px] w-[300px] bg-white"
         onChange={(e) => {
           handleUsernameChange(e);
         }}
